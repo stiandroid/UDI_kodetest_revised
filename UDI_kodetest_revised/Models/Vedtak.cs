@@ -1,7 +1,8 @@
-﻿namespace UDI_kodetest_revised.Models.DTO;
+﻿namespace UDI_kodetest_revised.Models;
 
-public class VedtakDTO
+public class Vedtak
 {
+    public Guid Id { get; set; }
     public string Authority { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public DateTime? GyldigFra { get; set; }

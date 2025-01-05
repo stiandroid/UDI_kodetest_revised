@@ -59,7 +59,7 @@ public class FileService(AppDbContext dbContext, IConfiguration config) : IFileS
         }
         catch (Exception ex)
         {
-            result.Errors.Add($"Feil ved prosessering av filen '{ex.Message}'");
+            result.Errors.Add($"Feil ved serialisering av filen: {ex.Message}");
         }
     }
 
