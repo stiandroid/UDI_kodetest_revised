@@ -3,7 +3,6 @@ global using Microsoft.EntityFrameworkCore;
 global using UDI_kodetest_revised.Components;
 global using UDI_kodetest_revised.Data;
 global using UDI_kodetest_revised.Models;
-global using UDI_kodetest_revised.Models.Entity;
 global using UDI_kodetest_revised.Services.FileService;
 
 var builder = WebApplication.CreateBuilder(args);

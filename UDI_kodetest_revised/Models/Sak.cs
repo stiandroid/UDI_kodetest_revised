@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace UDI_kodetest_revised.Models.Entity;
+namespace UDI_kodetest_revised.Models;
 
 public class Sak
 {

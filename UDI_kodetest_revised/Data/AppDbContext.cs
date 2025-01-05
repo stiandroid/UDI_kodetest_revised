@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
-using UDI_kodetest_revised.Models.Entity;
 
 namespace UDI_kodetest_revised.Data;
 
