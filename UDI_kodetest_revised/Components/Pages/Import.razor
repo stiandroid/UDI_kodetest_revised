@@ -29,7 +29,7 @@
     private int maxAllowedFiles = 3;
     private List<string> errors = new();
     private string rootFolder = string.Empty;
-    
+
     protected override void OnInitialized()
     {
         base.OnInitialized();
@@ -49,6 +49,18 @@
         {
             errors.Add($"Forsøkte å laste opp {e.FileCount} filer. Maks tillatte antall er {maxAllowedFiles}.");
             return;
+        }
+
+        try
+        {
+            foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+            {
+                errors.Add($"Filen {file.Name} har størrelse {file.Size} bytes");
+            }
+        }
+        catch (Exception ex)
+        {
+            errors.Add($"En feil oppstod: {ex.Message}");
         }
 
         var result = await fileService.ImportFilesAsync(e.GetMultipleFiles(maxAllowedFiles));
