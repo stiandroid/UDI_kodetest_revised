@@ -1,8 +1,6 @@
-﻿using UDI_kodetest_revised.Models;
-
-namespace UDI_kodetest_revised.Services.FileService;
+﻿namespace UDI_kodetest_revised.Services.FileService;
 
 public interface IFileService
 {
-    Task<ServiceResult> ImportFilesAsync(IEnumerable<IBrowserFile> files);
+    Task<ServiceResult> ImportFileAsync(IBrowserFile file);
 }
