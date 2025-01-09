@@ -4,6 +4,7 @@ global using UDI_kodetest_revised.Components;
 global using UDI_kodetest_revised.Data;
 global using UDI_kodetest_revised.Models;
 global using UDI_kodetest_revised.Services.FileService;
+global using UDI_kodetest_revised.Services.DataInsightService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IDataInsightService, DataInsightService>();
 
 var app = builder.Build();
 

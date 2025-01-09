@@ -1,7 +1,59 @@
 ﻿@page "/"
+@inject IDataInsightService dataInsightService
 
 <PageTitle>UDI kodetest revised</PageTitle>
 
 <h3>Datavisning</h3>
 
-<p>Var det tomt her? Prøv å <a href="/import">importere en JSON datafil</a> med saker.</p>
+@if (saker.Count == 0)
+{ 
+    <p>Var det tomt her? Prøv å <a href="/import">importere en JSON datafil</a> med saker.</p>
+}
+else
+{
+    <h4>Saker</h4>
+    <p>
+        Databasen inneholder @saker.Count saker.
+    </p>
+    <h4>Fattede vedtak</h4>
+    <table>
+        <tr>
+            <td>Innvilget</td>
+            <td>@vedtakInnvilget</td>
+        </tr>
+        <tr>
+            <td>Avslag</td>
+            <td>@vedtakAvslag</td>
+        </tr>
+        <tr>
+            <td>Søknaden avvist</td>
+            <td>@vedtakAvvist</td>
+        </tr>
+        <tr>
+            <td><strong>Totalt</strong></td>
+            <td><strong>@vedtakTotalt</strong></td>
+        </tr>
+    </table>
+}
+
+@code{
+    private List<Sak> saker = new();
+    private List<Person> personer = new();
+    private List<Vedtak> vedtak = new();
+    private int vedtakInnvilget = 0;
+    private int vedtakAvslag = 0;
+    private int vedtakAvvist = 0;
+    private int vedtakTotalt = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        saker = await dataInsightService.HentAlleSaker();
+        personer = await dataInsightService.HentAllePersoner();
+        vedtak = await dataInsightService.HentAlleVedtak();
+
+        vedtakInnvilget = vedtak.Where(v => v.Status.StartsWith("Ja")).Count();
+        vedtakAvslag = vedtak.Where(v => v.Status.StartsWith("Nei")).Count();
+        vedtakAvvist = vedtak.Where(v => v.Status.StartsWith("Avvist")).Count();
+        vedtakTotalt = vedtakInnvilget + vedtakAvslag + vedtakAvvist;
+    }
+}
