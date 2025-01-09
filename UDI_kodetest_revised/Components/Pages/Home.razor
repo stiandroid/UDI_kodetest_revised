@@ -15,25 +15,33 @@ else
     <p>
         Databasen inneholder @saker.Count saker.
     </p>
+
+    <h4>Søkere</h4>
+    <p>
+        Databasen inneholder @personerSokere søkere.
+    </p>
+
     <h4>Fattede vedtak</h4>
-    <table>
-        <tr>
-            <td>Innvilget</td>
-            <td>@vedtakInnvilget</td>
-        </tr>
-        <tr>
-            <td>Avslag</td>
-            <td>@vedtakAvslag</td>
-        </tr>
-        <tr>
-            <td>Søknaden avvist</td>
-            <td>@vedtakAvvist</td>
-        </tr>
-        <tr>
-            <td><strong>Totalt</strong></td>
-            <td><strong>@vedtakTotalt</strong></td>
-        </tr>
-    </table>
+    <p>
+        <table>
+            <tr>
+                <td>Innvilget</td>
+                <td>@vedtakInnvilget</td>
+            </tr>
+            <tr>
+                <td>Avslag</td>
+                <td>@vedtakAvslag</td>
+            </tr>
+            <tr>
+                <td>Avvist</td>
+                <td>@vedtakAvvist</td>
+            </tr>
+            <tr>
+                <td>Totalt</td>
+                <td>@vedtakTotalt</td>
+            </tr>
+        </table>
+    </p>
 }
 
 @code{
@@ -44,6 +52,7 @@ else
     private int vedtakAvslag = 0;
     private int vedtakAvvist = 0;
     private int vedtakTotalt = 0;
+    private int personerSokere = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,6 +63,8 @@ else
         vedtakInnvilget = vedtak.Where(v => v.Status.StartsWith("Ja")).Count();
         vedtakAvslag = vedtak.Where(v => v.Status.StartsWith("Nei")).Count();
         vedtakAvvist = vedtak.Where(v => v.Status.StartsWith("Avvist")).Count();
-        vedtakTotalt = vedtakInnvilget + vedtakAvslag + vedtakAvvist;
+        vedtakTotalt = vedtak.Count();
+
+        personerSokere = saker.Select(s => s.Soeker?.Personnummer).Distinct().Count();
     }
 }
