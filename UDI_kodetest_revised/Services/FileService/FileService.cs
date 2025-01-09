@@ -40,9 +40,9 @@ public class FileService(AppDbContext dbContext) : IFileService
             {
                 foreach (var sak in saker)
                 {
-                    if (sak.Soeker != null) await AddOrUpdatePersonAsync(sak.Soeker);
-                    if (sak.Fullmektig != null) await AddOrUpdatePersonAsync(sak.Fullmektig);
-                    if (sak.Kontakt != null) await AddOrUpdatePersonAsync(sak.Kontakt);
+                    sak.Soeker = sak.Soeker != null ? await GetOrUpdatePersonAsync(sak.Soeker) : null;
+                    sak.Fullmektig = sak.Fullmektig != null ? await GetOrUpdatePersonAsync(sak.Fullmektig) : null;
+                    sak.Kontakt = sak.Kontakt != null ? await GetOrUpdatePersonAsync(sak.Kontakt) : null;
 
                     var existingSak = await dbContext.Saker
                         .FirstOrDefaultAsync(s => s.SakId == sak.SakId);
@@ -58,11 +58,11 @@ public class FileService(AppDbContext dbContext) : IFileService
         }
         catch (Exception ex)
         {
-            result.Errors.Add($"Feil ved serialisering av filen: {ex.Message}");
+            result.Errors.Add($"Feil ved serialisering av filen. Sannsynligvis var ikke filen riktig formatert. Feilmelding: {ex.Message}");
         }
     }
 
-    private async Task AddOrUpdatePersonAsync(Person person)
+    private async Task<Person> GetOrUpdatePersonAsync(Person person)
     {
         var trackedPerson = dbContext.Personer.Local
             .FirstOrDefault(p => p.Personnummer == person.Personnummer);
@@ -70,21 +70,20 @@ public class FileService(AppDbContext dbContext) : IFileService
         if (trackedPerson != null)
         {
             UpdatePersonProperties(trackedPerson, person);
+            return trackedPerson;
         }
-        else
-        {
-            var existingPerson = await dbContext.Personer
-                .FirstOrDefaultAsync(p => p.Personnummer == person.Personnummer);
 
-            if (existingPerson != null)
-            {
-                UpdatePersonProperties(existingPerson, person);
-            }
-            else
-            {
-                await dbContext.Personer.AddAsync(person);
-            }
+        var existingPerson = await dbContext.Personer
+            .FirstOrDefaultAsync(p => p.Personnummer == person.Personnummer);
+
+        if (existingPerson != null)
+        {
+            UpdatePersonProperties(existingPerson, person);
+            return existingPerson;
         }
+
+        await dbContext.Personer.AddAsync(person);
+        return person;
     }
 
     private void UpdatePersonProperties(Person existingPerson, Person newPerson)
@@ -101,4 +100,5 @@ public class FileService(AppDbContext dbContext) : IFileService
         existingPerson.Postnummer = newPerson.Postnummer;
         existingPerson.Land = newPerson.Land;
     }
+
 }

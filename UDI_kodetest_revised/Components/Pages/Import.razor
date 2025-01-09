@@ -1,16 +1,19 @@
 ﻿@page "/import"
-@inject IConfiguration config
 @inject IFileService fileService
 
 <PageTitle>UDI kodetest revised</PageTitle>
 
 <h3>Importer JSON-data</h3>
 
-@if (rootFolderConfigured)
-{
+<p>
+    Velg datafil i JSON-format, maks 1 MB:<br />
+    <InputFile OnChange="LoadFile" />
+</p>
+
+@if (importResult != null)
+{ 
     <p>
-        Velg datafil i JSON-format, maks 1 MB:<br />
-        <InputFile OnChange="LoadFile" />
+        Filen ble lastet opp.
     </p>
 }
 
@@ -26,30 +29,23 @@
 }
 
 @code {
-    private bool rootFolderConfigured = true;
     private List<string> errors = new();
-    private string rootFolder = string.Empty;
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        rootFolder = config.GetValue<string>("FileStorage") ?? string.Empty;
-        if (string.IsNullOrEmpty(rootFolder))
-        {
-            errors.Add("Rotmappe (FileStorage) for lagring av JSON datafiler er ikke konfigurert.");
-            rootFolderConfigured = false;
-        }
-    }
+    private ServiceResult? importResult = null;
 
     private async Task LoadFile(InputFileChangeEventArgs e)
     {
         errors.Clear();
 
-        var result = await fileService.ImportFileAsync(e.File);
+        importResult = await fileService.ImportFileAsync(e.File);
 
-        if (!result.Success)
+        if (!importResult.Success)
         {
-            errors.AddRange(result.Errors);
+            errors.AddRange(importResult.Errors);
         }
+    }
+
+    private void ResetImportResultAfterUpload()
+    {
+        importResult = null;
     }
 }
